@@ -60,7 +60,7 @@ class AmorphousPlugin {
     const urlCollection = this.db.get("urls");
 
     this.mdFiles.forEach(async(file, index) => {
-      if (!file.path.startsWith("PluginTest/")) {
+      if (!file.path.startsWith("Amorphous.beta/")) {
         return;
       }
 
