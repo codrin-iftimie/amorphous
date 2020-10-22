@@ -68,10 +68,9 @@ class AmorphousPlugin {
       let links = getUrls(contents);
       const backLinks = getUrlBacklinks(contents)
 
-      console.log({links, backLinks})
+      let updated = contents;
 
-      let updated = contents
-      links.forEach(link => {
+      (links || []).forEach(link => {
         updated = updated.replace(link, (link, offset, string) => {
           const before = string[offset - 1];
           if (before === "|") {
@@ -85,9 +84,9 @@ class AmorphousPlugin {
 
           return `[[${urlInfo.path}|${urlInfo.url}]]`
         })
-      })
+      });
 
-      backLinks.forEach(link => {
+      (backLinks || []).forEach(link => {
         updated = updated.replace(link, (match) => {
           const originalMatch = match;
           const linkAndLabel = match.replace('[[', '').replace(']]', '');

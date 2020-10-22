@@ -3,11 +3,14 @@ const CryptoJs = require("crypto-js")
 const EventEmitter = require("events").EventEmitter
 const fs = require("fs")
 const path = require("path")
-const Readability = fs.readFileSync(path.resolve(__dirname, "./node_modules/@mozilla/readability/Readability.js"),  {encoding: 'utf-8'});
+const Readability = fs.readFileSync(
+  path.resolve(__dirname, "./node_modules/@mozilla/readability/Readability.js"),
+  { encoding: 'utf-8' }
+);
 
 function getUrls(text) {
   const results = text.match(/(https?:\/\/[^\s|\]|)]+)/g)
-  return results;
+  return results || [];
 }
 
 const executor = `
@@ -70,12 +73,11 @@ class NightCrawler extends EventEmitter {
   }
 
   processFile(content, file) {
-    this.queue = new Set([
-      ...this.queue,
-      ...getUrls(content)
-        .filter(url => !this.skipUrls.includes(url))
-        .map(url => ({ url, file, id: CryptoJs.MD5(url) }))
-    ])
+    const newLinks = getUrls(content)
+      .filter(url => !this.skipUrls.includes(url))
+      .map(url => ({ url, file, id: CryptoJs.MD5(url) }))
+    this.queue = new Set([...this.queue, ...newLinks])
+    this.skipUrls = [...this.skipUrls, ...newLinks]
   }
 }
 
